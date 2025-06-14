@@ -8,6 +8,7 @@ import { PerformanceChart } from "@/components/PerformanceChart";
 import { TradingHistory } from "@/components/TradingHistory";
 import { BotStatus } from "@/components/BotStatus";
 import { MarketOverview } from "@/components/MarketOverview";
+import { TradeTemplates } from "@/components/TradeTemplates";
 
 export function TradingDashboard() {
   return (
@@ -31,6 +32,7 @@ export function TradingDashboard() {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="trades">Trade History</TabsTrigger>
+          <TabsTrigger value="templates">Trade Templates</TabsTrigger>
           <TabsTrigger value="settings">Bot Settings</TabsTrigger>
         </TabsList>
         
@@ -121,6 +123,10 @@ export function TradingDashboard() {
         
         <TabsContent value="trades">
           <TradingHistory />
+        </TabsContent>
+        
+        <TabsContent value="templates">
+          <TradeTemplates />
         </TabsContent>
         
         <TabsContent value="settings">

@@ -1,16 +1,46 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, Loader2, AlertCircle } from "lucide-react";
+import { useMarketData } from "@/hooks/useMarketData";
 
-const marketData = [
-  { symbol: "SPY", price: 445.67, change: 2.34, changePercent: 0.53 },
-  { symbol: "QQQ", price: 378.92, change: -1.45, changePercent: -0.38 },
-  { symbol: "IWM", price: 198.34, change: 0.87, changePercent: 0.44 },
-  { symbol: "VIX", price: 18.23, change: -0.92, changePercent: -4.82 },
-];
+const DEFAULT_SYMBOLS = ["SPY", "QQQ", "IWM", "VIX"];
 
 export function MarketOverview() {
+  const { data: marketData, isLoading, error } = useMarketData(DEFAULT_SYMBOLS);
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Market Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <span className="ml-2">Loading market data...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Market Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8 text-red-600">
+            <AlertCircle className="h-8 w-8" />
+            <span className="ml-2">Failed to load market data. Please check your API configuration.</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -18,7 +48,7 @@ export function MarketOverview() {
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {marketData.map((item) => (
+          {marketData?.map((item) => (
             <div key={item.symbol} className="p-4 border rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-medium">{item.symbol}</span>
@@ -29,7 +59,7 @@ export function MarketOverview() {
                 )}
               </div>
               <div className="space-y-1">
-                <div className="text-2xl font-bold">${item.price}</div>
+                <div className="text-2xl font-bold">${item.price.toFixed(2)}</div>
                 <div className="flex items-center space-x-2">
                   <span className={`text-sm ${item.change > 0 ? "text-green-600" : "text-red-600"}`}>
                     {item.change > 0 ? "+" : ""}{item.change.toFixed(2)}

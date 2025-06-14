@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { MarketOverview } from "@/components/MarketOverview";
 import { TradeTemplates } from "@/components/TradeTemplates";
 import { PaperTradingPanel } from "@/components/PaperTradingPanel";
 import { RiskControlsPanel } from "@/components/RiskControlsPanel";
+import { EducationPanel } from "@/components/EducationPanel";
 
 export function TradingDashboard() {
   return (
@@ -28,8 +30,9 @@ export function TradingDashboard() {
         </div>
       </div>
       
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs defaultValue="education" className="space-y-4">
         <TabsList>
+          <TabsTrigger value="education">Learn to Trade</TabsTrigger>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="paper-trading">Paper Trading</TabsTrigger>
           <TabsTrigger value="risk-controls">Risk Controls</TabsTrigger>
@@ -38,6 +41,10 @@ export function TradingDashboard() {
           <TabsTrigger value="templates">Trade Templates</TabsTrigger>
           <TabsTrigger value="settings">Bot Settings</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="education" className="space-y-4">
+          <EducationPanel />
+        </TabsContent>
         
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

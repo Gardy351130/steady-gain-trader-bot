@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +10,8 @@ import {
   DollarSign, 
   Target,
   Lightbulb,
-  CheckCircle
+  CheckCircle,
+  PlayCircle
 } from "lucide-react";
 
 export function EducationPanel() {
@@ -39,8 +39,9 @@ export function EducationPanel() {
       </Card>
 
       <Tabs defaultValue="basics" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="basics">Trading Basics</TabsTrigger>
+          <TabsTrigger value="paper-trading">Why Paper Trading</TabsTrigger>
           <TabsTrigger value="safety">Stay Safe</TabsTrigger>
           <TabsTrigger value="platform">Using This App</TabsTrigger>
           <TabsTrigger value="glossary">Key Terms</TabsTrigger>
@@ -75,6 +76,67 @@ export function EducationPanel() {
                     <strong>Never invest money you can't afford to lose.</strong> Stock prices can go down as well as up.
                   </p>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Why Paper Trading Matters */}
+        <TabsContent value="paper-trading" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <PlayCircle className="h-5 w-5 text-green-600" />
+                Why Paper Trading Matters
+              </CardTitle>
+              <CardDescription>
+                Learn why practicing with virtual money is the smartest way to start your trading journey.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <h4 className="font-medium text-blue-800 mb-2">Learn Without Risk</h4>
+                  <p className="text-sm text-blue-700">
+                    Paper trading lets you practice buying and selling stocks with virtual money. You can make mistakes and learn from them without losing real money.
+                  </p>
+                </div>
+                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <h4 className="font-medium text-green-800 mb-2">Build Confidence</h4>
+                  <p className="text-sm text-green-700">
+                    As you practice and see your virtual portfolio grow, you'll gain confidence in your trading decisions before using real money.
+                  </p>
+                </div>
+                <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                  <h4 className="font-medium text-purple-800 mb-2">Test Your Strategy</h4>
+                  <p className="text-sm text-purple-700">
+                    Try different trading approaches and see what works best for you. This helps you find your trading style safely.
+                  </p>
+                </div>
+                <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                  <h4 className="font-medium text-orange-800 mb-2">Understand Market Emotions</h4>
+                  <p className="text-sm text-orange-700">
+                    Even with fake money, you'll experience the emotions of winning and losing trades. This prepares you for real trading psychology.
+                  </p>
+                </div>
+              </div>
+              
+              <Alert className="border-yellow-200 bg-yellow-50">
+                <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                <AlertDescription className="text-yellow-800">
+                  <strong>Important:</strong> Most successful traders recommend practicing for at least 3-6 months with paper trading before using real money. There's no rush - take your time to learn.
+                </AlertDescription>
+              </Alert>
+
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-medium mb-2">Getting Started with Paper Trading</h4>
+                <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+                  <li>Go to the "Paper Trading" tab in this app</li>
+                  <li>Start with the virtual $100,000 we give you</li>
+                  <li>Practice buying and selling stocks you know</li>
+                  <li>Track your wins and losses</li>
+                  <li>Only move to real money when you're consistently profitable</li>
+                </ol>
               </div>
             </CardContent>
           </Card>

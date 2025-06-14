@@ -5,19 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, TrendingUp, TrendingDown, AlertCircle, ShoppingCart } from "lucide-react";
+import { DollarSign, TrendingUp, TrendingDown, AlertCircle, ShoppingCart, Shield } from "lucide-react";
 import { usePaperTrading } from "@/hooks/usePaperTrading";
 import { useMarketData } from "@/hooks/useMarketData";
+import { useRiskControls } from "@/hooks/useRiskControls";
+import { TradeConfirmationDialog } from "@/components/TradeConfirmationDialog";
 
 export function PaperTradingPanel() {
   const [symbol, setSymbol] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState('');
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [pendingTrade, setPendingTrade] = useState<{symbol: string; quantity: number; price: number} | null>(null);
   
   const { portfolio, buyStock, resetPortfolio } = usePaperTrading();
   const { data: marketData } = useMarketData(['SPY', 'QQQ', 'IWM', 'AAPL', 'MSFT', 'GOOGL', 'TSLA']);
+  const { riskSettings, validateTrade, recordTrade } = useRiskControls();
 
-  const handleBuy = () => {
+  const handleBuyAttempt = () => {
     try {
       setError('');
       const stockData = marketData?.find(stock => stock.symbol === symbol.toUpperCase());
@@ -25,14 +30,42 @@ export function PaperTradingPanel() {
         setError('Stock not found or market data unavailable');
         return;
       }
+
+      // Validate trade against risk controls
+      const violations = validateTrade(symbol.toUpperCase(), quantity, stockData.price, portfolio.cash);
       
-      buyStock(symbol.toUpperCase(), quantity, stockData.price);
-      setSymbol('');
-      setQuantity(1);
+      if (riskSettings.requireConfirmation || violations.length > 0) {
+        setPendingTrade({
+          symbol: symbol.toUpperCase(),
+          quantity,
+          price: stockData.price
+        });
+        setShowConfirmation(true);
+      } else {
+        executeTrade(symbol.toUpperCase(), quantity, stockData.price);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Trade failed');
     }
   };
+
+  const executeTrade = (tradeSymbol: string, tradeQuantity: number, tradePrice: number) => {
+    try {
+      buyStock(tradeSymbol, tradeQuantity, tradePrice);
+      recordTrade(); // Record the trade for daily limits
+      setSymbol('');
+      setQuantity(1);
+      setShowConfirmation(false);
+      setPendingTrade(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Trade failed');
+      setShowConfirmation(false);
+      setPendingTrade(null);
+    }
+  };
+
+  const currentPrice = symbol && marketData?.find(s => s.symbol === symbol)?.price;
+  const violations = pendingTrade ? validateTrade(pendingTrade.symbol, pendingTrade.quantity, pendingTrade.price, portfolio.cash) : [];
 
   return (
     <div className="space-y-6">
@@ -42,9 +75,10 @@ export function PaperTradingPanel() {
           <CardTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
             Paper Trading Portfolio
+            <Shield className="h-4 w-4 text-green-600" />
           </CardTitle>
           <CardDescription>
-            Practice trading with virtual money - No real money at risk
+            Practice trading with virtual money - Protected by risk controls
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -75,7 +109,7 @@ export function PaperTradingPanel() {
             Place Order
           </CardTitle>
           <CardDescription>
-            Buy stocks with your virtual money
+            Buy stocks with your virtual money (Risk controls active)
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -96,6 +130,11 @@ export function PaperTradingPanel() {
                 onChange={(e) => setSymbol(e.target.value.toUpperCase())}
                 className="uppercase"
               />
+              {symbol && !riskSettings.allowedSymbols.includes(symbol) && (
+                <p className="text-xs text-red-600">
+                  This stock is not in your approved trading list
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="quantity">Quantity</Label>
@@ -110,17 +149,28 @@ export function PaperTradingPanel() {
             <div className="space-y-2">
               <Label>Current Price</Label>
               <div className="h-10 flex items-center px-3 bg-gray-50 border rounded-md">
-                {symbol && marketData?.find(s => s.symbol === symbol)?.price 
-                  ? `$${marketData.find(s => s.symbol === symbol)?.price.toFixed(2)}`
-                  : 'Enter symbol'
-                }
+                {currentPrice ? `$${currentPrice.toFixed(2)}` : 'Enter symbol'}
               </div>
             </div>
           </div>
+
+          {/* Trade Value Warning */}
+          {currentPrice && quantity > 0 && (
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm">
+                <strong>Trade Value:</strong> ${(currentPrice * quantity).toFixed(2)}
+                {(currentPrice * quantity) > riskSettings.maxPositionSize && (
+                  <span className="text-red-600 ml-2">
+                    (Exceeds ${riskSettings.maxPositionSize} position limit)
+                  </span>
+                )}
+              </p>
+            </div>
+          )}
           
           <div className="flex gap-2">
             <Button 
-              onClick={handleBuy} 
+              onClick={handleBuyAttempt} 
               disabled={!symbol || quantity < 1}
               className="flex-1"
             >
@@ -173,6 +223,19 @@ export function PaperTradingPanel() {
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {/* Trade Confirmation Dialog */}
+      {pendingTrade && (
+        <TradeConfirmationDialog
+          open={showConfirmation}
+          onOpenChange={setShowConfirmation}
+          onConfirm={() => executeTrade(pendingTrade.symbol, pendingTrade.quantity, pendingTrade.price)}
+          symbol={pendingTrade.symbol}
+          quantity={pendingTrade.quantity}
+          price={pendingTrade.price}
+          violations={violations}
+        />
       )}
     </div>
   );

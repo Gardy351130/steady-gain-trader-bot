@@ -1,8 +1,8 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { 
   BookOpen, 
   Shield, 
@@ -12,10 +12,18 @@ import {
   Target,
   Lightbulb,
   CheckCircle,
-  PlayCircle
+  PlayCircle,
+  ArrowRight,
+  Zap,
+  Calculator,
+  ExternalLink
 } from "lucide-react";
 
-export function EducationPanel() {
+interface EducationPanelProps {
+  onSwitchToPaperTrading?: () => void;
+}
+
+export function EducationPanel({ onSwitchToPaperTrading }: EducationPanelProps) {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
@@ -36,13 +44,28 @@ export function EducationPanel() {
               Start with paper trading (virtual money) to practice without risk. Only trade with real money when you understand the basics.
             </AlertDescription>
           </Alert>
+          
+          {/* Quick Training CTA */}
+          <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-emerald-50 border border-blue-100 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium text-slate-800">Ready to Practice?</h4>
+                <p className="text-sm text-slate-600">Jump into risk-free paper trading now</p>
+              </div>
+              <Button onClick={onSwitchToPaperTrading} className="bg-emerald-600 hover:bg-emerald-700">
+                <PlayCircle className="h-4 w-4 mr-2" />
+                Start Training
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
       <Tabs defaultValue="basics" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5 bg-muted/50">
+        <TabsList className="grid w-full grid-cols-6 bg-muted/50">
           <TabsTrigger value="basics" className="text-sm">Trading Basics</TabsTrigger>
           <TabsTrigger value="paper-trading" className="text-sm">Why Paper Trading</TabsTrigger>
+          <TabsTrigger value="training" className="text-sm">Interactive Training</TabsTrigger>
           <TabsTrigger value="safety" className="text-sm">Stay Safe</TabsTrigger>
           <TabsTrigger value="platform" className="text-sm">Using This App</TabsTrigger>
           <TabsTrigger value="glossary" className="text-sm">Key Terms</TabsTrigger>
@@ -76,6 +99,19 @@ export function EducationPanel() {
                   <p className="text-sm text-slate-600">
                     <strong>Never invest money you can't afford to lose.</strong> Stock prices can go down as well as up.
                   </p>
+                </div>
+              </div>
+
+              {/* Training CTA */}
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium text-blue-800">Next Step: Practice What You Learned</h4>
+                    <p className="text-sm text-blue-600">Try buying your first virtual stock with $100,000 practice money</p>
+                  </div>
+                  <Button onClick={onSwitchToPaperTrading} variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-100">
+                    Practice Now <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -138,6 +174,127 @@ export function EducationPanel() {
                   <li>Track your wins and losses</li>
                   <li>Only move to real money when you're consistently profitable</li>
                 </ol>
+              </div>
+
+              {/* Direct Training Link */}
+              <div className="mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium text-emerald-800">Ready to Start Paper Trading?</h4>
+                    <p className="text-sm text-emerald-600">Jump right into our safe practice environment</p>
+                  </div>
+                  <Button onClick={onSwitchToPaperTrading} className="bg-emerald-600 hover:bg-emerald-700">
+                    <Zap className="h-4 w-4 mr-2" />
+                    Start Now
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* New Interactive Training Tab */}
+        <TabsContent value="training" className="space-y-4">
+          <Card className="border-muted">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="h-5 w-5 text-blue-500" />
+                Interactive Training
+              </CardTitle>
+              <CardDescription>
+                Hands-on exercises to build your trading skills step by step
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Training Modules */}
+              <div className="grid gap-4">
+                <div className="p-4 border border-blue-200 rounded-lg bg-blue-50/50">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-blue-800 mb-2">Module 1: Your First Virtual Trade</h4>
+                      <p className="text-sm text-blue-600 mb-3">
+                        Learn how to buy your first stock with practice money. We'll guide you through every step.
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-blue-600">
+                        <CheckCircle className="h-3 w-3" />
+                        <span>10 minutes • Beginner friendly</span>
+                      </div>
+                    </div>
+                    <Button onClick={onSwitchToPaperTrading} size="sm" className="bg-blue-600 hover:bg-blue-700">
+                      Start Module
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="p-4 border border-emerald-200 rounded-lg bg-emerald-50/50">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-emerald-800 mb-2">Module 2: Risk Management Practice</h4>
+                      <p className="text-sm text-emerald-600 mb-3">
+                        Practice setting stop losses and position sizes to protect your virtual portfolio.
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-emerald-600">
+                        <Calculator className="h-3 w-3" />
+                        <span>15 minutes • Practice calculations</span>
+                      </div>
+                    </div>
+                    <Button onClick={onSwitchToPaperTrading} size="sm" variant="outline" className="border-emerald-300 text-emerald-700 hover:bg-emerald-100">
+                      Practice Risk
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="p-4 border border-purple-200 rounded-lg bg-purple-50/50">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-purple-800 mb-2">Module 3: Reading Market Signals</h4>
+                      <p className="text-sm text-purple-600 mb-3">
+                        Learn to interpret basic market data and make informed trading decisions.
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-purple-600">
+                        <TrendingUp className="h-3 w-3" />
+                        <span>20 minutes • Market analysis</span>
+                      </div>
+                    </div>
+                    <Button size="sm" variant="outline" className="border-purple-300 text-purple-700 hover:bg-purple-100">
+                      Coming Soon
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* External Training Resources */}
+              <div className="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-lg">
+                <h4 className="font-medium mb-3 text-slate-700">Additional Training Resources</h4>
+                <div className="space-y-2">
+                  <a 
+                    href="https://www.sec.gov/investor/pubs/tenthingstoconsider.htm" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-2 bg-white border border-slate-200 rounded hover:bg-slate-50 transition-colors"
+                  >
+                    <span className="text-sm text-slate-700">SEC: 10 Things to Consider Before Trading</span>
+                    <ExternalLink className="h-4 w-4 text-slate-400" />
+                  </a>
+                  <a 
+                    href="https://www.investor.gov/introduction-investing/investing-basics" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-2 bg-white border border-slate-200 rounded hover:bg-slate-50 transition-colors"
+                  >
+                    <span className="text-sm text-slate-700">Investor.gov: Investing Basics</span>
+                    <ExternalLink className="h-4 w-4 text-slate-400" />
+                  </a>
+                  <a 
+                    href="https://www.finra.org/investors/learn-to-invest/types-investments/stocks" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-2 bg-white border border-slate-200 rounded hover:bg-slate-50 transition-colors"
+                  >
+                    <span className="text-sm text-slate-700">FINRA: Understanding Stocks</span>
+                    <ExternalLink className="h-4 w-4 text-slate-400" />
+                  </a>
+                </div>
               </div>
             </CardContent>
           </Card>

@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -13,9 +12,15 @@ import { PaperTradingPanel } from "@/components/PaperTradingPanel";
 import { RiskControlsPanel } from "@/components/RiskControlsPanel";
 import { EducationPanel } from "@/components/EducationPanel";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 
 export function TradingDashboard() {
   const isMobile = useIsMobile();
+  const [activeTab, setActiveTab] = useState("education");
+  
+  const switchToPaperTrading = () => {
+    setActiveTab("paper-trading");
+  };
   
   return (
     <div className="flex-1 space-y-4 p-2 pt-4 md:p-4 md:pt-6 lg:p-8">
@@ -41,7 +46,7 @@ export function TradingDashboard() {
         </div>
       </div>
       
-      <Tabs defaultValue="education" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2 h-auto gap-1' : 'grid-cols-4 lg:grid-cols-8'}`}>
           <TabsTrigger value="education" className="text-xs sm:text-sm touch-manipulation">
             {isMobile ? "Learn" : "Learn to Trade"}
@@ -70,7 +75,7 @@ export function TradingDashboard() {
         </TabsList>
         
         <TabsContent value="education" className="space-y-4">
-          <EducationPanel />
+          <EducationPanel onSwitchToPaperTrading={switchToPaperTrading} />
         </TabsContent>
         
         <TabsContent value="overview" className="space-y-4">

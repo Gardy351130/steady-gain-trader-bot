@@ -1,12 +1,8 @@
 
-import { TradingDashboard } from "@/components/TradingDashboard";
+import { LandingPage } from "@/components/LandingPage";
 
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-background">
-      <TradingDashboard />
-    </div>
-  );
+  return <LandingPage />;
 };
 
 export default Index;

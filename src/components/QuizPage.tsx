@@ -4,52 +4,65 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, XCircle, ArrowLeft, Brain } from "lucide-react";
+import { CheckCircle, XCircle, ArrowLeft, Brain, BookOpen } from "lucide-react";
 
 interface Question {
   id: number;
   question: string;
   options: string[];
   correctAnswer: number;
-  explanation: string;
 }
 
 const quizQuestions: Question[] = [
   {
     id: 1,
-    question: "What is paper trading?",
+    question: "What is a paper trade?",
     options: [
-      "Trading with real money but small amounts",
-      "Trading with virtual money to practice",
-      "Trading only with paper documents",
-      "A type of investment in paper companies"
+      "A real trade using small amounts of money",
+      "A test trade using fake money",
+      "A type of trading report"
     ],
-    correctAnswer: 1,
-    explanation: "Paper trading lets you practice with virtual money, so you can learn without any financial risk."
+    correctAnswer: 1
   },
   {
     id: 2,
-    question: "What should you do before investing real money?",
+    question: "What is a stop loss?",
     options: [
-      "Invest everything you have",
-      "Learn and practice first",
-      "Follow tips from social media",
-      "Buy whatever is trending"
+      "A limit you set to automatically sell to avoid big losses",
+      "A bonus when a stock hits a high",
+      "A tool to increase your trade size"
     ],
-    correctAnswer: 1,
-    explanation: "Always learn the basics and practice with paper trading before risking real money."
+    correctAnswer: 0
   },
   {
     id: 3,
-    question: "What is a good rule for how much to risk on one trade?",
+    question: "How much should you risk on one trade?",
     options: [
-      "Risk everything for maximum profit",
-      "Never risk more than 1-2% of your total money",
-      "Risk 50% to see big gains",
-      "Risk as much as you can afford to lose"
+      "As much as you can afford to lose",
+      "No more than 1–2% of your total capital",
+      "Half your account for bigger gains"
     ],
-    correctAnswer: 1,
-    explanation: "Most successful traders never risk more than 1-2% of their total capital on a single trade."
+    correctAnswer: 1
+  },
+  {
+    id: 4,
+    question: "What should you do after a losing streak?",
+    options: [
+      "Double your trade size to win it back",
+      "Take a break and review what went wrong",
+      "Keep trading fast to recover"
+    ],
+    correctAnswer: 1
+  },
+  {
+    id: 5,
+    question: "What's the goal of GrumpyBum Steady Gain?",
+    options: [
+      "Make fast profits",
+      "Learn slowly and protect your money",
+      "Copy professional day traders"
+    ],
+    correctAnswer: 1
   }
 ];
 
@@ -91,33 +104,16 @@ export function QuizPage() {
     setAnswers([]);
   };
 
-  const getScoreMessage = () => {
-    const percentage = (score / quizQuestions.length) * 100;
-    if (percentage === 100) return "Perfect! You're ready to start practicing.";
-    if (percentage >= 66) return "Great job! You have a good foundation.";
-    if (percentage >= 33) return "Not bad! Some learning will help you improve.";
-    return "No worries! Everyone starts somewhere. Let's learn together.";
+  const handleLearnFirst = () => {
+    navigate("/dashboard?tab=education");
   };
 
-  const getRecommendation = () => {
-    const percentage = (score / quizQuestions.length) * 100;
-    if (percentage >= 66) {
-      return {
-        action: "Try Paper Trading",
-        description: "You're ready to practice with virtual money!",
-        onClick: () => navigate("/dashboard?tab=paper-trading")
-      };
-    } else {
-      return {
-        action: "Learn the Basics First",
-        description: "Let's build your foundation with some quick lessons.",
-        onClick: () => navigate("/dashboard?tab=education")
-      };
-    }
+  const handleStartTrading = () => {
+    navigate("/dashboard?tab=paper-trading");
   };
 
   if (showResult) {
-    const recommendation = getRecommendation();
+    const passed = score >= 4;
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4">
@@ -133,8 +129,14 @@ export function QuizPage() {
 
           <Card className="bg-white">
             <CardHeader className="text-center">
-              <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <Brain className="h-8 w-8 text-blue-600" />
+              <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 ${
+                passed ? 'bg-green-100' : 'bg-orange-100'
+              }`}>
+                {passed ? (
+                  <CheckCircle className="h-8 w-8 text-green-600" />
+                ) : (
+                  <XCircle className="h-8 w-8 text-orange-600" />
+                )}
               </div>
               <CardTitle className="text-2xl">Quiz Complete!</CardTitle>
               <CardDescription className="text-lg">
@@ -143,46 +145,50 @@ export function QuizPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="text-center">
-                <Badge variant="secondary" className="text-lg px-4 py-2">
-                  {Math.round((score / quizQuestions.length) * 100)}%
+                <Badge 
+                  variant={passed ? "default" : "secondary"} 
+                  className={`text-lg px-4 py-2 ${
+                    passed ? 'bg-green-600 hover:bg-green-700' : ''
+                  }`}
+                >
+                  {passed ? '✅ Passed!' : '🔁 Try Again'}
                 </Badge>
-                <p className="mt-4 text-slate-600">{getScoreMessage()}</p>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="font-semibold text-lg">What you learned:</h3>
-                {quizQuestions.map((question, index) => (
-                  <div key={question.id} className="p-4 bg-slate-50 rounded-lg">
-                    <div className="flex items-start gap-3">
-                      {answers[index] === question.correctAnswer ? (
-                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-                      ) : (
-                        <XCircle className="h-5 w-5 text-red-600 mt-0.5" />
-                      )}
-                      <div className="flex-1">
-                        <p className="font-medium text-sm">{question.question}</p>
-                        <p className="text-xs text-slate-600 mt-1">{question.explanation}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                
+                {passed ? (
+                  <p className="mt-4 text-slate-600 text-lg">
+                    <strong>Nice work, legend.</strong> You're cleared to start trading with real money.
+                  </p>
+                ) : (
+                  <p className="mt-4 text-slate-600 text-lg">
+                    <strong>Not quite there yet.</strong> Go through the Learn section, then come back.
+                  </p>
+                )}
               </div>
 
               <div className="text-center space-y-4">
-                <Button 
-                  onClick={recommendation.onClick}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
-                >
-                  {recommendation.action}
-                </Button>
-                <p className="text-sm text-slate-600">{recommendation.description}</p>
+                {passed ? (
+                  <Button 
+                    onClick={handleStartTrading}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3"
+                  >
+                    Start Paper Trading
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={handleLearnFirst}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
+                  >
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    Learn Here First
+                  </Button>
+                )}
                 
                 <Button 
                   variant="outline" 
                   onClick={resetQuiz}
                   className="w-full"
                 >
-                  Take Quiz Again
+                  Try Quiz Again
                 </Button>
               </div>
             </CardContent>
@@ -207,27 +213,30 @@ export function QuizPage() {
         </Button>
 
         <Card className="bg-white">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xl">Quick Knowledge Check</CardTitle>
-              <Badge variant="secondary">
-                {currentQuestion + 1} of {quizQuestions.length}
+          <CardHeader className="text-center">
+            <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              <Brain className="h-8 w-8 text-blue-600" />
+            </div>
+            <CardTitle className="text-2xl">Let's See What You Know Before You Start Trading</CardTitle>
+            <CardDescription className="text-lg">
+              Don't worry — this is just to make sure you're ready. You only need 4 out of 5 to pass.
+            </CardDescription>
+            <div className="flex items-center justify-center mt-4">
+              <Badge variant="secondary" className="text-lg px-4 py-2">
+                Question {currentQuestion + 1} of {quizQuestions.length}
               </Badge>
             </div>
-            <CardDescription>
-              Let's see what you already know — no pressure!
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
-              <h3 className="text-lg font-medium mb-4">{question.question}</h3>
+              <h3 className="text-xl font-medium mb-6 text-center">{question.question}</h3>
               
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {question.options.map((option, index) => (
                   <Button
                     key={index}
                     variant={selectedAnswer === index ? "default" : "outline"}
-                    className="w-full text-left justify-start h-auto p-4"
+                    className="w-full text-left justify-start h-auto p-4 text-lg"
                     onClick={() => handleAnswerSelect(index)}
                   >
                     {option}
@@ -236,11 +245,11 @@ export function QuizPage() {
               </div>
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-center pt-4">
               <Button 
                 onClick={handleNextQuestion}
                 disabled={selectedAnswer === null}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-blue-600 hover:bg-blue-700 px-8 py-3 text-lg"
               >
                 {currentQuestion < quizQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
               </Button>
